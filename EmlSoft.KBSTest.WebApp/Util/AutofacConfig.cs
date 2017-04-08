@@ -21,7 +21,7 @@ namespace EmlSoft.KBSTest.WebApp.Util
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
 
             // регистрируем споставление типов
-            builder.RegisterType<Data.SqlSourceRepository>().As<Domain.SourceRepository>();
+            builder.RegisterType<Data.SqlSourceRepository>().As<Domain.ISourceRepository>();
 
             // Мы не доверяем администратору
             builder.RegisterType<Data.SqlContext>().WithParameter("ConnectionString",

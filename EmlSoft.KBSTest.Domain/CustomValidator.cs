@@ -8,18 +8,20 @@ using System.Threading.Tasks;
 
 namespace EmlSoft.KBSTest.Domain
 {
-    public class Validator
+    public class CustomValidator
     {
-        const string Pattern = @"^(https?:\/\/)?" + // protocol
-           @"((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|" + // domain name
-           @"((\d{1,3}\.){3}\d{1,3}))" + // OR ip (v4) address
-           @"(\:\d+)?(\/[-a-z\d%_.~+]*)*" + // port and path
-           @"(\?[;&a-z\d%_.~+=-]*)?" + // query string
-           @"(\#[-a-z\d_]*)?$"; // fragment locater
 
         public static ValidationResult ValidateUrl(string Url)
         {
-            throw new Exception("qq");
+            return new ValidationResult("Введите правильный URL");
+            /*
+            string Pattern = @"^(https?:\/\/)?" + // protocol
+               @"((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|" + // domain name
+               @"((\d{1,3}\.){3}\d{1,3}))" + // OR ip (v4) address
+               @"(\:\d+)?(\/[-a-z\d%_.~+]*)*" + // port and path
+               @"(\?[;&a-z\d%_.~+=-]*)?" + // query string
+               @"(\#[-a-z\d_]*)?$"; // fragment locater
+
             if (Regex.IsMatch(Url, Pattern))
             {
                 return ValidationResult.Success;
@@ -28,6 +30,7 @@ namespace EmlSoft.KBSTest.Domain
             {
                 return new ValidationResult("Введите правильный URL");
             }
+            */
         }
     }
 }

@@ -24,7 +24,6 @@
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.Id })
         </td>
     </tr>
@@ -33,6 +32,6 @@
 </table>
 
 @Html.ActionLink("<<", "Index" , new { Id = 0, Direction = 1 } ) |
-@Html.ActionLink("<", "Index", new { Id = Model?.FirstOrDefault()?.Id  ?? 0, Direction = 1 }) |
-@Html.ActionLink(">", "Index", new { Id = Model?.LastOrDefault()?.Id ?? int.MaxValue, Direction = -1 }) |
+@Html.ActionLink("<", "Index", new { Id = Model?.FirstOrDefault()?.Id  ?? 0, Direction = -1 }) |
+@Html.ActionLink(">", "Index", new { Id = Model?.LastOrDefault()?.Id ?? int.MaxValue, Direction = 1 }) |
 @Html.ActionLink(">>", "Index", new { Id = int.MaxValue, Direction = -1 }) 

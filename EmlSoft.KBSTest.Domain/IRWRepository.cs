@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmlSoft.KBSTest.Domain
 {
-    interface IRWRepository<T>  : IRepository<T> where T : class
+    public interface IRWRepository<T, Key>  : IRepository<T> where T : class
     {
         #region Sync
         void Create(T t);
@@ -14,6 +14,8 @@ namespace EmlSoft.KBSTest.Domain
         void Delete(T t);
 
         void Update(T t);
+
+        T GetItemById(Key Id);
         #endregion
 
         #region Async
@@ -22,6 +24,8 @@ namespace EmlSoft.KBSTest.Domain
         Task DeleteAsync(Source t);
 
         Task UpdateAsync(Source t);
+
+        Task<T> GetItemByIdAsync(Key Id);
         #endregion
     }
 }

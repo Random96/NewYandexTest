@@ -13,7 +13,7 @@ namespace EmlSoft.KBSTest.Domain
 
         [Required]
         [StringLength(250)]
-        [CustomValidation(typeof(Validator), "ValidateUrl")]
+        [Url]
         public string Url { get; set; }
     }
 }

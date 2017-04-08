@@ -9,9 +9,11 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
 {
     public class SourceController : Controller
     {
-        readonly Domain.SourceRepository m_Rep;
+        readonly Domain.ISourceRepository m_Rep;
 
-        public SourceController(Domain.SourceRepository Rep)
+        const int PageSize = 5;
+
+        public SourceController(Domain.ISourceRepository Rep)
         {
             if (Rep == null)
                 throw new ArgumentNullException("Rep");
@@ -26,23 +28,17 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
             switch (Direction)
             {
                 case 1:
-                    ret = await m_Rep.GetListAsync(Id, 15);
+                    ret = await m_Rep.GetListAsync(Id, PageSize);
                     break;
 
                 case -1:
-                    ret = await m_Rep.GetListBackAsync(Id, 15);
+                    ret = await m_Rep.GetListBackAsync(Id, PageSize);
                     break;
 
                 default:
                     return View(new List<Domain.Source>());
             }
             return View(ret);
-        }
-
-        // GET: Source/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
         }
 
         // GET: Source/Create
@@ -73,47 +69,66 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
         }
 
         // GET: Source/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var Src = await m_Rep.GetItemByIdAsync(id);
+
+            return View( Src );
         }
 
         // POST: Source/Edit/5
         [HttpPost]
-        public async Task<ActionResult> Edit(int id, FormCollection collection)
+        public async Task<ActionResult> Edit(int ? id , FormCollection collection)
         {
+            if( id == null )
+                return RedirectToAction("Index");
+
             try
             {
-                await m_Rep.UpdateAsync( new Domain.Source { Id = id, Url = "qq" });
+                if (ModelState.IsValid)
+                {
+                    await m_Rep.UpdateAsync(new Domain.Source { Id = id ?? 0, Url = collection["Url"] });
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ModelState.AddModelError("", ex.Message);
             }
+            return View(new Domain.Source { Url = collection["Url"] });
         }
 
         // GET: Source/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            var Src = await m_Rep.GetItemByIdAsync(id);
+
+            return View(Src);
         }
 
         // POST: Source/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public async Task<ActionResult> Delete(int ? id, FormCollection collection)
         {
+            if( id == null  )
+                return RedirectToAction("Index");
+
             try
             {
-                // TODO: Add delete logic here
+                if (ModelState.IsValid)
+                {
+                    await m_Rep.DeleteAsync(new Domain.Source { Id = id ?? 0, Url = collection["Url"] });
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ModelState.AddModelError(string.Empty, ex.Message );
             }
+
+            return View(new Domain.Source { Url = collection["Url"] });
         }
     }
 }
