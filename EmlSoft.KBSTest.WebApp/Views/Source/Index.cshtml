@@ -1,0 +1,38 @@
+﻿@model IEnumerable<EmlSoft.KBSTest.Domain.Source>
+
+@{
+    ViewBag.Title = "Список источников";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Добавить новый источник", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Url)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Url)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
+
+@Html.ActionLink("<<", "Index" , new { Id = 0, Direction = 1 } ) |
+@Html.ActionLink("<", "Index", new { Id = Model?.FirstOrDefault()?.Id  ?? 0, Direction = 1 }) |
+@Html.ActionLink(">", "Index", new { Id = Model?.LastOrDefault()?.Id ?? int.MaxValue, Direction = -1 }) |
+@Html.ActionLink(">>", "Index", new { Id = int.MaxValue, Direction = -1 }) 
