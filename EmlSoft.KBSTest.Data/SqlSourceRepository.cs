@@ -38,6 +38,9 @@ namespace EmlSoft.KBSTest.Data
 
         public ICollection<Domain.Source> GetList(int From, int PageSize)
         {
+            if(PageSize == 0)
+                return m_Context.Sources.AsNoTracking().OrderBy(p => p.Id).Select(p => new Domain.Source { Id = p.Id, Url = p.Url }).ToList();
+
             return m_Context.Sources.AsNoTracking().Where(p => p.Id > From).OrderBy(p=>p.Id).Take(PageSize).Select(p => new Domain.Source { Id=p.Id, Url=p.Url }).ToList();
         }
 
@@ -50,7 +53,11 @@ namespace EmlSoft.KBSTest.Data
 
         public async Task<ICollection<Domain.Source>> GetListAsync(int From, int PageSize)
         {
-            var ret = await  m_Context.Sources.AsNoTracking().Where(p => p.Id > From).OrderBy(p => p.Id).Take(PageSize).Select(p => new Domain.Source { Id = p.Id, Url = p.Url }).ToListAsync();
+            ICollection<Domain.Source> ret = null;
+            if(PageSize == 0)
+                ret = await m_Context.Sources.AsNoTracking().OrderBy(p => p.Id).Select(p => new Domain.Source { Id = p.Id, Url = p.Url }).ToListAsync();
+            else
+                ret = await  m_Context.Sources.AsNoTracking().Where(p => p.Id > From).OrderBy(p => p.Id).Take(PageSize).Select(p => new Domain.Source { Id = p.Id, Url = p.Url }).ToListAsync();
             return ret;
         }
 
@@ -148,6 +155,21 @@ namespace EmlSoft.KBSTest.Data
                 Id = ret.Id,
                 Url = ret.Url
             };
+        }
+
+        public void SaveSourceContext(int SourceId, string Context)
+        {
+            var ret = m_Context.Contents.FirstOrDefault(p => p.SourceId == SourceId);
+            if(ret == null)
+            {
+                ret = new Content()
+                {
+                    SourceId = SourceId
+                };
+                m_Context.Contents.Add(ret);
+            }
+            ret.Data = Context;
+            m_Context.SaveChanges();
         }
     }
 }

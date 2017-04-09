@@ -15,5 +15,7 @@ namespace EmlSoft.KBSTest.Data
         public int SourceId { get; set;  }
 
         public Source Source { get; set; }
+
+        public string Data { get; set; }
     }
 }

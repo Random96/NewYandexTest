@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace EmlSoft.KBSTest.Domain
 {
-    public interface ISourceRepository : IDisposable, IRWRepository<Source, int>
+    public interface IGrubber
     {
-        void SaveSourceContext(int SourceId, string Context);
+        string Grub(string Url);
     }
 }

@@ -1,0 +1,24 @@
+﻿@model IEnumerable<EmlSoft.KBSTest.Domain.Source>
+
+<script src="~/Scripts/grabber.js"></script>
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<table Id="ListTable" class="table">
+    <tr>
+        <th>
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Url)
+        </th>
+    </tr>
+</table>
+
+<input id="GrubButton" type="button" value="Загрузка" onclick="doRequest()" />
+
+
