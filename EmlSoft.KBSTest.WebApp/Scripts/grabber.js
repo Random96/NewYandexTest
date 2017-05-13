@@ -8,33 +8,19 @@
         success: function (result) { },
         complete: function (result)
         {
-            DoTestAppend("before DoListGrab");
             DoListGrab(result);
-            DoTestAppend("after DoListGrab");
         }
     });
 }
 
 function DoListGrab(result) {
-    DoTestAppend("in DoListGrab");
-    try
-    {
-        $.each(result.responseJSON, function () {
-            DoTestAppend("before doGrubItem " + this);
-            doGrubItem(this);
-            DoTestAppend("after doGrubItem " + this);
-        });
-    }
-    catch( exp)
-    {
-        DoTestAppend("error in DoListGrab " + exp );
-    }
-
-    DoTestAppend("after DoListGrab");
+    $.each(result.responseJSON, function () {
+        doGrubItem(this);
+    });
 }
 
+
 function doGrubItem(Id) {
-    DoTestAppend("before ajax item" + Id);
     $.ajax({
         type: "POST",
         url: "/Graber/DoGrub",
@@ -42,16 +28,18 @@ function doGrubItem(Id) {
         error: function (error) { $('#ListTable').append("<tr><td>error</td><td>" + error + "</td></tr>"); },
         complete: function (result) { DoAppendLine(result.responseJSON); }
     });
-    DoTestAppend("after ajax item" + Id);
 }
 
 function DoAppendLine(result)
 {
-    $('#ListTable').append("<tr><td>" + result.Status + "</td><td>" + result.Name + "</td></tr>");
-}
+    var imgTag = "";
 
-function DoTestAppend(result) {
-    $('#ListTable').append("<tr><td>TestAppend</td><td>" + result + "</td></tr>");
+    if (result.Status === 1)
+        imgTag = "<img src=\"/img/o.png\" />Ok</img>";
+    else
+        imgTag = "<img src=\"/img/n.png\" />Fail</img>";
+
+    $('#ListTable').append("<tr><td>" + imgTag + "</td><td>" + result.Name + "</td></tr>");
 }
 
 

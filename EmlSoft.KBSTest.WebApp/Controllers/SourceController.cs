@@ -9,35 +9,18 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
 {
     public class SourceController : Controller
     {
-        readonly Domain.ISourceRepository m_Rep;
+        ModelView.ISourceModelView m_ModelView;
 
-        const int PageSize = 5;
-
-        public SourceController(Domain.ISourceRepository Rep)
+        public SourceController(ModelView.ISourceModelView ModelView )
         {
-            if (Rep == null)
-                throw new ArgumentNullException("Rep");
-
-            m_Rep = Rep;
+            m_ModelView = ModelView;
         }
 
         // GET: Source
         public async Task<ActionResult> Index(int Id = 0, int Direction = 1)
         {
-            IEnumerable<Domain.Source> ret = null;
-            switch (Direction)
-            {
-                case 1:
-                    ret = await m_Rep.GetListAsync(Id, PageSize);
-                    break;
+            IEnumerable<Domain.Source> ret = await m_ModelView.GetIndexAsync(Id, Direction);
 
-                case -1:
-                    ret = await m_Rep.GetListBackAsync(Id, PageSize);
-                    break;
-
-                default:
-                    return View(new List<Domain.Source>());
-            }
             return View(ret);
         }
 
@@ -55,23 +38,23 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
             {
                 if (ModelState.IsValid)
                 {
-
-                    await m_Rep.CreateAsync(new Domain.Source { Url = collection["Url"] });
+                    await m_ModelView.CreateAsync(collection["Url"]);
 
                     return RedirectToAction("Index");
                 }
             }
             catch(Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
+
             return View(new Domain.Source { Url = collection["Url"] } );
         }
 
         // GET: Source/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var Src = await m_Rep.GetItemByIdAsync(id);
+            var Src = await m_ModelView.GetItemByIdAsync(id);
 
             return View( Src );
         }
@@ -82,12 +65,11 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
         {
             if( id == null )
                 return RedirectToAction("Index");
-
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await m_Rep.UpdateAsync(new Domain.Source { Id = id ?? 0, Url = collection["Url"] });
+                    await m_ModelView.UpdateAsync(new Domain.Source { Id = id ?? 0, Url = collection["Url"] });
 
                     return RedirectToAction("Index");
                 }
@@ -102,7 +84,7 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
         // GET: Source/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var Src = await m_Rep.GetItemByIdAsync(id);
+            var Src = await m_ModelView.GetItemByIdAsync(id);
 
             return View(Src);
         }
@@ -118,7 +100,7 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await m_Rep.DeleteAsync(new Domain.Source { Id = id ?? 0, Url = collection["Url"] });
+                    await m_ModelView.DeleteAsync(id ?? 0);
 
                     return RedirectToAction("Index");
                 }

@@ -171,5 +171,43 @@ namespace EmlSoft.KBSTest.Data
             ret.Data = Context;
             m_Context.SaveChanges();
         }
+
+        public async Task<IEnumerable<ISearchResult>> SerachAsync(string Search)
+        {
+            const int iPageSize = 200;
+
+            List<SearchResult> ret = new List<SearchResult>();
+
+            if (string.IsNullOrWhiteSpace(Search))
+                return ret;
+
+            try
+            {
+                var List = await m_Context.Contents.AsNoTracking().ToListAsync();
+
+                foreach (var src in List)
+                {
+                    int Pos = 0;
+                    int NewPos;
+                    int Max = src.Data.Length;
+
+                    var Source = await m_Context.Sources.FirstOrDefaultAsync(p => p.Id == src.SourceId);
+
+                    while ((NewPos = src.Data.IndexOf(Search, Pos, StringComparison.CurrentCultureIgnoreCase)) > 0)
+                    {
+                        int FirstPos = NewPos > iPageSize ? NewPos - iPageSize : 0;
+                        int Length = FirstPos + iPageSize * 2 + Search.Length > Max ? Max - FirstPos - 1 : FirstPos + iPageSize * 2;
+                        string str = src.Data.Substring(FirstPos, Length);
+                        ret.Add(new SearchResult { Url = Source.Url, Result = str });
+                        Pos = NewPos + 1;
+                    }
+                }
+            }
+            catch( Exception ex)
+            {
+                ret.Add(new SearchResult { Url = null, Result = ex.Message });
+            }
+            return ret;
+        }
     }
 }

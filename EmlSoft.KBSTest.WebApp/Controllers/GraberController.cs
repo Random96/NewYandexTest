@@ -12,12 +12,16 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
         readonly Domain.ISourceRepository m_Rep;
         readonly Domain.IGrubber m_Gruber;
 
-        public GraberController(Domain.ISourceRepository Rep, Domain.IGrubber m_Gruber)
+        public GraberController(Domain.ISourceRepository Rep, Domain.IGrubber Gruber)
         {
             if (Rep == null)
                 throw new ArgumentNullException("Rep");
 
+            if (Gruber == null)
+                throw new ArgumentNullException("Gruber");
+
             m_Rep = Rep;
+            m_Gruber = Gruber;
         }
 
         // GET: Graber
@@ -42,7 +46,19 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
         {
             if (Request.IsAjaxRequest())
             {
-                return Json( new { Status = 1, Name = "qq" } );
+                var Src = m_Rep.GetItemById(Id);
+                try
+                {
+                    string Context = m_Gruber.Grub(Src.Url);
+
+                    m_Rep.SaveSourceContext(Id, Context);
+
+                    return Json(new { Status = 1, Name = Src.Url, Comment = string.Empty });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { Status = 0, Name = Src.Url, Comment = ex.Message });
+                }
             }
             return RedirectToAction("Index");
         }

@@ -23,6 +23,10 @@ namespace EmlSoft.KBSTest.WebApp.Util
             // регистрируем споставление типов
             builder.RegisterType<Data.SqlSourceRepository>().As<Domain.ISourceRepository>();
 
+            builder.RegisterType<ModelView.SourceModelView>().As<ModelView.ISourceModelView>();
+
+            builder.RegisterType<Domain.HttpGrubber>().As<Domain.IGrubber>();
+
             // Мы не доверяем администратору
             builder.RegisterType<Data.SqlContext>().WithParameter("ConnectionString",
                 @"data source=(LocalDb)\MSSQLLocalDB;initial catalog=EmlSoft.KBSTest.SqlContext;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework")

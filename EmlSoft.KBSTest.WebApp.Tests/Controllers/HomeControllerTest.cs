@@ -58,7 +58,7 @@ namespace EmlSoft.KBSTest.WebApp.Tests.Controllers
         {
             var Container = Util.AutofacConfig.ConfigureContainer();
 
-            Domain.ISourceRepository Rep = Container.Resolve<Domain.ISourceRepository>();
+            ModelView.ISourceModelView Rep = Container.Resolve<ModelView.ISourceModelView>();
 
             // Arrange
             SourceController controller = new SourceController(Rep);

@@ -142,6 +142,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="ModelView\ISourceModelView.cs" />
+    <Compile Include="ModelView\SourceModelView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\AutofacConfig.cs" />
   </ItemGroup>
@@ -203,12 +205,11 @@
     <Content Include="Views\Source\Create.cshtml" />
     <Content Include="Views\Source\Delete.cshtml" />
     <Content Include="Views\Graber\Index.cshtml" />
+    <Content Include="Views\Search\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="ModelView\" />
-    <Folder Include="Views\Search\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
