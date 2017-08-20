@@ -10,35 +10,55 @@ namespace EmlSoft.KBSTest.Data
 {
     public class SqlSourceRepository : Domain.ISourceRepository
     {
-        readonly SqlContext m_Context;
+        private SqlContext m_Context;
 
+		/// <summary>
+		/// default constructor
+		/// </summary>
+		/// <param name="Context">database context</param>
         public SqlSourceRepository(SqlContext Context)
         {
-            m_Context = Context;
+            m_Context = Context ?? throw new ArgumentNullException( nameof(Context));
         }
 
+		/// <summary>
+		/// create new data object in sync mode
+		/// </summary>
+		/// <param name="t">Source domain object </param>
         public void Create(Domain.Source t)
         {
-            Source src = new Source(){Url = t.Url};
+			Checkisposed();
+
+			Source src = new Source(){Url = t.Url};
             m_Context.Sources.Add(src);
             m_Context.SaveChanges();
         }
 
-        public async Task CreateAsync(Domain.Source t)
+		/// <summary>
+		/// create new data object in async mode
+		/// </summary>
+		/// <param name="t">Source domain object </param>
+		/// <returns></returns>
+		public async Task CreateAsync(Domain.Source t)
         {
-            Source src = new Source() { Url = t.Url };
+			Checkisposed();
+
+			Source src = new Source() { Url = t.Url };
             m_Context.Sources.Add(src);
             await m_Context.SaveChangesAsync();
         }
 
-        public void Dispose()
-        {
-            m_Context.Dispose();
-        }
-
+		/// <summary>
+		/// Get list of database object with paging support  in sync mode ordering by id reda forward
+		/// </summary>
+		/// <param name="From">Id first elements</param>
+		/// <param name="PageSize">number item in page. if 0 - read all </param>
+		/// <returns></returns>
         public ICollection<Domain.Source> GetList(int From, int PageSize)
         {
-            if(PageSize == 0)
+			Checkisposed();
+
+			if (PageSize == 0)
                 return m_Context.Sources.AsNoTracking().OrderBy(p => p.Id).Select(p => new Domain.Source { Id = p.Id, Url = p.Url }).ToList();
 
             return m_Context.Sources.AsNoTracking().Where(p => p.Id > From).OrderBy(p=>p.Id).Take(PageSize).Select(p => new Domain.Source { Id=p.Id, Url=p.Url }).ToList();
@@ -46,14 +66,18 @@ namespace EmlSoft.KBSTest.Data
 
         public ICollection<Domain.Source> GetListBack(int From, int PageSize)
         {
-            var ret = m_Context.Sources.AsNoTracking().Where(p => p.Id < From).OrderByDescending(p => p.Id).Take(PageSize).Select(p => new Domain.Source { Id = p.Id, Url = p.Url }).ToList();
+			Checkisposed();
+
+			var ret = m_Context.Sources.AsNoTracking().Where(p => p.Id < From).OrderByDescending(p => p.Id).Take(PageSize).Select(p => new Domain.Source { Id = p.Id, Url = p.Url }).ToList();
             ret.Reverse();
             return ret;
         }
 
         public async Task<ICollection<Domain.Source>> GetListAsync(int From, int PageSize)
         {
-            ICollection<Domain.Source> ret = null;
+			Checkisposed();
+
+			ICollection<Domain.Source> ret = null;
             if(PageSize == 0)
                 ret = await m_Context.Sources.AsNoTracking().OrderBy(p => p.Id).Select(p => new Domain.Source { Id = p.Id, Url = p.Url }).ToListAsync();
             else
@@ -63,14 +87,18 @@ namespace EmlSoft.KBSTest.Data
 
         public async Task<ICollection<Domain.Source>> GetListBackAsync(int From, int PageSize)
         {
-            var ret = await m_Context.Sources.AsNoTracking().Where(p => p.Id < From).OrderByDescending(p => p.Id).Take(PageSize).Select(p => new Domain.Source { Id = p.Id, Url = p.Url }).ToListAsync();
+			Checkisposed();
+
+			var ret = await m_Context.Sources.AsNoTracking().Where(p => p.Id < From).OrderByDescending(p => p.Id).Take(PageSize).Select(p => new Domain.Source { Id = p.Id, Url = p.Url }).ToListAsync();
             ret.Reverse();
             return ret;
         }
 
         public async Task DeleteAsync(Domain.Source Src)
         {
-            if (Src == null)
+			Checkisposed();
+
+			if (Src == null)
                 throw new ArgumentNullException("Src");
 
             var ret = await m_Context.Sources.FirstOrDefaultAsync(p => p.Id == Src.Id);
@@ -85,7 +113,9 @@ namespace EmlSoft.KBSTest.Data
 
         public void Delete(Domain.Source Src)
         {
-            if (Src == null)
+			Checkisposed();
+
+			if (Src == null)
                 throw new ArgumentNullException("Src");
 
             var ret = m_Context.Sources.FirstOrDefault(p => p.Id == Src.Id);
@@ -100,7 +130,9 @@ namespace EmlSoft.KBSTest.Data
 
         public void Update(Domain.Source Src)
         {
-            if (Src == null)
+			Checkisposed();
+
+			if (Src == null)
                 throw new ArgumentNullException("Src");
 
             var ret = m_Context.Sources.FirstOrDefault(p => p.Id == Src.Id);
@@ -116,7 +148,9 @@ namespace EmlSoft.KBSTest.Data
 
         public async Task UpdateAsync(Domain.Source Src)
         {
-            if (Src == null)
+			Checkisposed();
+
+			if (Src == null)
                 throw new ArgumentNullException("Src");
 
             var ret = await m_Context.Sources.FirstOrDefaultAsync(p => p.Id == Src.Id);
@@ -131,7 +165,9 @@ namespace EmlSoft.KBSTest.Data
 
         public Domain.Source GetItemById(int Id)
         {
-            var ret = m_Context.Sources.AsNoTracking().FirstOrDefault(p => p.Id == Id);
+			Checkisposed();
+
+			var ret = m_Context.Sources.AsNoTracking().FirstOrDefault(p => p.Id == Id);
 
             if (ret == null)
                 return new Domain.Source();
@@ -159,7 +195,10 @@ namespace EmlSoft.KBSTest.Data
 
         public void SaveSourceContext(int SourceId, string Context)
         {
-            var ret = m_Context.Contents.FirstOrDefault(p => p.SourceId == SourceId);
+			Checkisposed();
+
+			var ret = m_Context.Contents.FirstOrDefault(p => p.SourceId == SourceId);
+
             if(ret == null)
             {
                 ret = new Content()
@@ -174,7 +213,9 @@ namespace EmlSoft.KBSTest.Data
 
         public async Task<IEnumerable<ISearchResult>> SerachAsync(string Search)
         {
-            const int iPageSize = 200;
+			Checkisposed();
+
+			const int iPageSize = 200;
 
             List<SearchResult> ret = new List<SearchResult>();
 
@@ -209,5 +250,39 @@ namespace EmlSoft.KBSTest.Data
             }
             return ret;
         }
-    }
+
+		#region IDisposable Support
+		private bool disposedValue = false; // Для определения избыточных вызовов
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposedValue)
+			{
+				if (disposing)
+				{
+					m_Context = null;
+				}
+
+				disposedValue = true;
+			}
+		}
+
+
+		// Этот код добавлен для правильной реализации шаблона высвобождаемого класса.
+		public void Dispose()
+		{
+			// Не изменяйте этот код. Разместите код очистки выше, в методе Dispose(bool disposing).
+			Dispose(true);
+			// TODO: раскомментировать следующую строку, если метод завершения переопределен выше.
+
+			// GC.SuppressFinalize(this);
+		}
+
+		private void Checkisposed()
+		{
+			if (disposedValue)
+				throw new ObjectDisposedException( ToString() );
+		}
+		#endregion
+	}
 }
