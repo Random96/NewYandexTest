@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmlSoft.KBSTest.WebApp", "EmlSoft.KBSTest.WebApp\EmlSoft.KBSTest.WebApp.csproj", "{03A9E1AD-BCF4-43C1-849E-20FAD2271A30}"
 EndProject
@@ -10,6 +10,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmlSoft.KBSTest.Data", "EmlSoft.KBSTest.Data\EmlSoft.KBSTest.Data.csproj", "{538B5BB7-2B9F-468F-A0B4-CCA3B591EB2D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmlSoft.KBSTest.Domain", "EmlSoft.KBSTest.Domain\EmlSoft.KBSTest.Domain.csproj", "{5C61A89D-E86D-4E1A-AE24-0D270A1FD314}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ECBEA134-E05F-408E-871F-2F2DCF63E12D}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
