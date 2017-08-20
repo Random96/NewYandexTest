@@ -14,14 +14,9 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
 
         public GraberController(Domain.ISourceRepository Rep, Domain.IGrubber Gruber)
         {
-            if (Rep == null)
-                throw new ArgumentNullException("Rep");
+			m_Rep = Rep ?? throw new ArgumentNullException(nameof(Rep));
 
-            if (Gruber == null)
-                throw new ArgumentNullException("Gruber");
-
-            m_Rep = Rep;
-            m_Gruber = Gruber;
+            m_Gruber = Gruber ?? throw new ArgumentNullException(nameof(Gruber));
         }
 
         // GET: Graber

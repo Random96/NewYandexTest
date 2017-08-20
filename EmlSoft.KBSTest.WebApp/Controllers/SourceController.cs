@@ -13,8 +13,8 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
 
         public SourceController(ModelView.ISourceModelView ModelView )
         {
-            m_ModelView = ModelView;
-        }
+            m_ModelView = ModelView ?? throw new ArgumentNullException( nameof(ModelView));
+		}
 
         // GET: Source
         public async Task<ActionResult> Index(int Id = 0, int Direction = 1)

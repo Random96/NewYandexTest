@@ -13,10 +13,7 @@ namespace EmlSoft.KBSTest.WebApp.Controllers
 
         public SearchController(Domain.ISourceRepository Rep )
         {
-            if (Rep == null)
-                throw new ArgumentNullException("Rep");
-
-            m_Rep = Rep;
+			m_Rep = Rep ?? throw new ArgumentNullException( nameof(Rep));
         }
 
         // GET: Search

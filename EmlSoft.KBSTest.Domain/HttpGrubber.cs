@@ -12,34 +12,63 @@ namespace EmlSoft.KBSTest.Domain
 {
     public class HttpGrubber : IGrubber
     {
-        public string Grub(string Url)
-        {
-            WebRequest Request = WebRequest.Create(Url);
+		public string Grub(string Url)
+		{
+			var Request = WebRequest.Create(Url);
 
-            System.Net.HttpWebResponse resp = Request.GetResponse() as System.Net.HttpWebResponse;
 
-            Stream httpStream = resp.GetResponseStream();
+			System.Net.HttpWebResponse resp = Request.GetResponse() as System.Net.HttpWebResponse;
 
-            Encoding enc;
+			Stream httpStream = resp.GetResponseStream();
 
-            switch ( resp.CharacterSet.ToUpper().Replace(" ", string.Empty) )
-            {
-                case "ISO-8859-1":
-                    enc = Encoding.UTF8;
-                    break;
-                default:
-                    enc = Encoding.GetEncoding(resp.CharacterSet.ToUpper().Replace(" ", string.Empty));
-                    break;
-            }
+			Encoding enc = Encoding.GetEncoding(resp.CharacterSet.ToUpper().Replace(" ", string.Empty));
 
-            StreamReader httpReader = new StreamReader(httpStream, enc);
+			// read request into memory
+			using (MemoryStream buffer = new MemoryStream())
+			{
+				httpStream.CopyTo(buffer);
+				buffer.Position = 0;
 
-            string str = httpReader.ReadToEnd();
+				StreamReader httpReader = new StreamReader(buffer, enc);
 
-            var stripped = StripHTML(str);
+				string str = httpReader.ReadToEnd();
 
-            return stripped;
-        }
+				var content = Regex.Match(str, "content=\".*\"");
+				if(content != null)
+				{
+					var contentPairs = content.Value.Split(';');
+					foreach( var val in contentPairs )
+					{
+						var pairs = val.Split('=');
+						if( pairs[0].Trim().ToUpper() == "CHARSET")
+						{
+							try
+							{
+								var newEnc = Encoding.GetEncoding(pairs[1].ToUpper().Replace(" ", string.Empty).Replace("\"", string.Empty));
+
+								if (newEnc != enc)
+								{
+									buffer.Position = 0;
+
+									var newReader = new StreamReader(buffer, newEnc);
+
+									str = newReader.ReadToEnd();
+
+								}
+							}
+							catch(Exception)
+							{
+								// подавляем все ошибки
+							}
+						}
+					}
+				}
+
+				var stripped = StripHTML(str);
+
+				return stripped;
+			}
+		}
 
         public static string StripHTML(string source)
         {
